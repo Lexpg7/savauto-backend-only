@@ -163,7 +163,7 @@ app.post('/api/v1/auth/login', async function(req, res) {
 
     res.json({
       success: true,
-       {
+      data: {
         accessToken: token,
         user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: user.role },
       },
@@ -175,7 +175,7 @@ app.post('/api/v1/auth/login', async function(req, res) {
 
 app.get('/api/v1/auth/me', authMiddleware, function(req: any, res) {
   var user = req.user;
-  res.json({ success: true,  { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: user.role } });
+  res.json({ success: true, data: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: user.role } });
 });
 
 // ============================================
@@ -188,13 +188,13 @@ app.get('/api/v1/clients', authMiddleware, tenantFilter, function(req: any, res)
   var filtered = search
     ? items.filter(function(c) { return (c.first_name + ' ' + c.last_name + ' ' + c.phone + ' ' + (c.email || '')).toLowerCase().indexOf(search) !== -1; })
     : items;
-  res.json({ success: true,  { items: filtered, total: filtered.length } });
+  res.json({ success: true, data: { items: filtered, total: filtered.length } });
 });
 
 app.get('/api/v1/clients/:id', authMiddleware, tenantFilter, function(req: any, res) {
   var client = db.clients.find(function(c) { return c.id === req.params.id && c.company_id === req.companyId; });
   if (!client) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Client not found' } });
-  res.json({ success: true,  client });
+  res.json({ success: true, data: client });
 });
 
 app.post('/api/v1/clients', authMiddleware, tenantFilter, function(req: any, res) {
@@ -204,7 +204,7 @@ app.post('/api/v1/clients', authMiddleware, tenantFilter, function(req: any, res
     created_at: new Date().toISOString(),
   }, req.body);
   db.clients.push(newClient);
-  res.status(201).json({ success: true,  newClient });
+  res.status(201).json({ success: true, data: newClient });
 });
 
 // ============================================
@@ -214,13 +214,13 @@ app.post('/api/v1/clients', authMiddleware, tenantFilter, function(req: any, res
 app.get('/api/v1/cars', authMiddleware, tenantFilter, function(req: any, res) {
   var items = db.cars.filter(function(c) { return c.company_id === req.companyId; });
   if (req.query.status) items = items.filter(function(c) { return c.status === req.query.status; });
-  res.json({ success: true,  { items: items, total: items.length } });
+  res.json({ success: true, data: { items: items, total: items.length } });
 });
 
 app.get('/api/v1/cars/:id', authMiddleware, tenantFilter, function(req: any, res) {
   var car = db.cars.find(function(c) { return c.id === req.params.id && c.company_id === req.companyId; });
   if (!car) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Car not found' } });
-  res.json({ success: true,  car });
+  res.json({ success: true, data: car });
 });
 
 // ============================================
@@ -229,7 +229,7 @@ app.get('/api/v1/cars/:id', authMiddleware, tenantFilter, function(req: any, res
 
 app.get('/api/v1/deals', authMiddleware, tenantFilter, function(req: any, res) {
   var items = db.deals.filter(function(d) { return d.company_id === req.companyId; });
-  res.json({ success: true,  { items: items, total: items.length } });
+  res.json({ success: true, data: { items: items, total: items.length } });
 });
 
 // ============================================
@@ -238,7 +238,7 @@ app.get('/api/v1/deals', authMiddleware, tenantFilter, function(req: any, res) {
 
 app.get('/api/v1/leads', authMiddleware, tenantFilter, function(req: any, res) {
   var items = db.leads.filter(function(l) { return l.company_id === req.companyId; });
-  res.json({ success: true,  { items: items, total: items.length } });
+  res.json({ success: true, data: { items: items, total: items.length } });
 });
 
 // ============================================
@@ -247,7 +247,7 @@ app.get('/api/v1/leads', authMiddleware, tenantFilter, function(req: any, res) {
 
 app.get('/api/v1/payments', authMiddleware, tenantFilter, function(req: any, res) {
   var items = db.payments.filter(function(p) { return p.company_id === req.companyId; });
-  res.json({ success: true,  { items: items, total: items.length } });
+  res.json({ success: true, data: { items: items, total: items.length } });
 });
 
 // ============================================
@@ -256,7 +256,7 @@ app.get('/api/v1/payments', authMiddleware, tenantFilter, function(req: any, res
 
 app.get('/api/v1/tasks', authMiddleware, tenantFilter, function(req: any, res) {
   var items = db.tasks.filter(function(t) { return t.company_id === req.companyId; });
-  res.json({ success: true,  { items: items, total: items.length } });
+  res.json({ success: true, data: { items: items, total: items.length } });
 });
 
 // ============================================
@@ -265,7 +265,7 @@ app.get('/api/v1/tasks', authMiddleware, tenantFilter, function(req: any, res) {
 
 app.get('/api/v1/notifications', authMiddleware, tenantFilter, function(req: any, res) {
   var items = db.notifications.filter(function(n) { return n.user_id === req.user.id; });
-  res.json({ success: true,  { items: items, total: items.length } });
+  res.json({ success: true, data: { items: items, total: items.length } });
 });
 
 // ============================================
@@ -274,7 +274,7 @@ app.get('/api/v1/notifications', authMiddleware, tenantFilter, function(req: any
 
 app.get('/api/v1/documents', authMiddleware, tenantFilter, function(req: any, res) {
   var items = db.documents.filter(function(d) { return d.company_id === req.companyId; });
-  res.json({ success: true,  { items: items, total: items.length } });
+  res.json({ success: true, data: { items: items, total: items.length } });
 });
 
 // ============================================
@@ -283,7 +283,7 @@ app.get('/api/v1/documents', authMiddleware, tenantFilter, function(req: any, re
 
 app.get('/api/v1/support/tickets', authMiddleware, tenantFilter, function(req: any, res) {
   var items = db.supportTickets.filter(function(t) { return t.company_id === req.companyId; });
-  res.json({ success: true,  { items: items, total: items.length } });
+  res.json({ success: true, data: { items: items, total: items.length } });
 });
 
 // ============================================
@@ -296,7 +296,7 @@ app.get('/api/v1/dashboard', authMiddleware, tenantFilter, function(req: any, re
   
   res.json({
     success: true,
-     {
+    data: {
       total_clients: db.clients.filter(function(c) { return c.company_id === req.companyId; }).length,
       active_deals: db.deals.filter(function(d) { return d.company_id === req.companyId && d.status !== 'COMPLETED' && d.status !== 'CANCELLED'; }).length,
       total_cars: cars.length,
@@ -326,7 +326,7 @@ app.post('/api/v1/telegram/validate', function(req, res) {
 
   res.json({
     success: true,
-     { client: client, cars: cars, payments: payments, documents: documents },
+    data: { client: client, cars: cars, payments: payments, documents: documents },
   });
 });
 
